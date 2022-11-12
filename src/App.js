@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useCallback, useEffect, useState } from "react";
+import { Card, ListGroup } from "react-bootstrap";
 
-function App() {
+const App = () => {
+  const [postId, setPostId] = useState(1);
+
+  const [post, setPost] = useState(null);
+
+  const getPost = useCallback(() => {
+    fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => setPost(data));
+  }, [postId]);
+
+  useEffect(() => {
+    getPost();
+  }, [postId]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {post == null ? (
+        <div>로딩중..</div>
+      ) : (
+        <Card style={{ width: "18rem" }}>
+          <Card.Header>post 1 데이터</Card.Header>
+          <ListGroup variant="flush">
+            <ListGroup.Item>{post.userId}</ListGroup.Item>
+            <ListGroup.Item>{post.id}</ListGroup.Item>
+            <ListGroup.Item>{post.title}</ListGroup.Item>
+            <ListGroup.Item>{post.body}</ListGroup.Item>
+          </ListGroup>
+        </Card>
+      )}
+      <button onClick={() => setPostId((prev) => prev + 1)}>다음글 보기</button>
     </div>
   );
-}
+};
 
 export default App;
